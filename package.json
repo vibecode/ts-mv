@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "parcel index.html",
+    "server": "json-server -w db.json",
+    "dev": "concurrently npm:build npm:server"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "parcel-bundler": "^1.12.3"
-  },
   "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "json-server": "^0.15.1",
     "typescript": "^3.6.2"
   }
 }
