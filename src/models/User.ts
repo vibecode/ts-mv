@@ -1,37 +1,28 @@
-interface UserProps {
-  name?: string
-  age?: number
-}
+import { Model } from './Model'
+import { Attributes } from './Attributes'
+import { Sync } from './Sync'
+import { Eventing } from './Eventing'
+import { Collection } from './Collection'
+import { UserProps } from '../types'
+const rootUrl = 'http://localhost:3000/users'
 
-type Callback = () => void
-
-export class User {
-  events: { [key: string]: Callback[] } = {}
-
-  constructor(private data: UserProps) {}
-
-  get(propName: string): number | string {
-    return this.data[propName]
+export class User extends Model<UserProps> {
+  static buildUser(attrs: UserProps): User {
+    return new User(
+      new Attributes<UserProps>(attrs),
+      new Eventing(),
+      new Sync<UserProps>(rootUrl)
+    )
   }
 
-  set(update: UserProps): void {
-    Object.assign(this.data, update)
+  static buildUserCollection(): Collection<User, UserProps> {
+    return new Collection<User, UserProps>(rootUrl, (json: UserProps) =>
+      User.buildUser(json)
+    )
   }
 
-  on(ev: string, callback: Callback) {
-    const handlers = this.events[ev] || []
-
-    handlers.push(callback)
-    this.events[ev] = handlers
-  }
-
-  trigger(ev: string): void {
-    const handlers = this.events[ev]
-
-    if (!handlers || handlers.length === 0) {
-      return
-    }
-
-    handlers.forEach(cb => cb())
+  setRandomAge(): void {
+    const age = Math.round(Math.random() * 100)
+    this.set({ age })
   }
 }
